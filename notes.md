@@ -17,10 +17,10 @@ As part of `Deliverable ⓵ Development deployment: JWT Pizza`, start up the app
 | View About page                                     |  about.tsx                  |        none           |     none         |
 | View History page                                   |        history.tsx            |        none           |      none        |
 | Login as franchisee<br/>(f@jwt.com, pw: franchisee) |     login.tsx               |        [PUT] /api/auth           |     INSERT INTO auth (token, userId) VALUES (?, ?)         |
-| View franchise<br/>(as franchisee)                  |                    |                   |              |
-| Create a store                                      |                    |                   |              |
-| Close a store                                       |                    |                   |              |
+| View franchise<br/>(as franchisee)                  |        franchiseDashboard.tsx            |          none         |      SELECT objectId FROM userRole WHERE role='franchisee' AND userId=?; SELECT u.id, u.name, u.email FROM userRole AS ur JOIN user AS u ON u.id=ur.userId WHERE ur.objectId=? AND ur.role='franchisee'; SELECT s.id, s.name, COALESCE(SUM(oi.price), 0) AS totalRevenue FROM dinerOrder AS do JOIN orderItem AS oi ON do.id=oi.orderId RIGHT JOIN store AS s ON s.id=do.storeId WHERE s.franchiseId=? GROUP BY s.id;        |
+| Create a store                                      |          franchiseDashboard.tsx          |         none          |      INSERT INTO store (franchiseId, name) VALUES (?, ?)        |
+| Close a store                                       |          franchiseDashboard.tsx          |        none           |      DELETE FROM store WHERE franchiseId=? AND id=?        |
 | Login as admin<br/>(a@jwt.com, pw: admin)           |       login.tsx             |        [PUT] /api/auth           |      INSERT INTO auth (token, userId) VALUES (?, ?)        |
-| View Admin page                                     |                    |                   |              |
-| Create a franchise for t@jwt.com                    |                    |                   |              |
-| Close the franchise for t@jwt.com                   |                    |                   |              |
+| View Admin page                                     |       adminDashboard.tsx             |         none          |   SELECT id, name FROM franchise; SELECT u.id, u.name, u.email FROM userRole AS ur JOIN user AS u ON u.id=ur.userId WHERE ur.objectId=? AND ur.role='franchisee'           |
+| Create a franchise for t@jwt.com                    |       createFranchise.tsx             |         none          |    INSERT INTO franchise (name) VALUES (?);  INSERT INTO userRole (userId, role, objectId) VALUES (?, ?, ?)         |
+| Close the franchise for t@jwt.com                   |         closeFranchise.tsx           |        none           |      DELETE FROM store WHERE franchiseId=?;  DELETE FROM userRole WHERE objectId=?;  DELETE FROM franchise WHERE id=?;      |
